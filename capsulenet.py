@@ -19,12 +19,12 @@ Author: Xifeng Guo, E-mail: `guoxifeng1990@163.com`, Github: `https://github.com
 from keras import layers, models, optimizers
 from keras import backend as K
 from keras.utils import to_categorical
-from capsulelayers import CapsuleLayer, PrimaryCap, Length, Mask
+from .capsulelayers import CapsuleLayer, PrimaryCap, Length, Mask
 
 K.set_image_data_format('channels_last')
 
 
-def CapsNet(input_shape, n_class, num_routing):
+def CapsNet(input_shape=(28, 28, 1), n_class=10, num_routing=3):
     """
     A Capsule Network on MNIST.
     :param input_shape: data shape, 3d, [width, height, channels]
@@ -32,6 +32,7 @@ def CapsNet(input_shape, n_class, num_routing):
     :param num_routing: number of routing iterations
     :return: A Keras Model with 2 inputs and 2 outputs
     """
+    import numpy as np
     x = layers.Input(shape=input_shape)
 
     # Layer 1: Just a conventional Conv2D layer
@@ -129,7 +130,7 @@ def train(model, data, args):
     model.save_weights(args.save_dir + '/trained_model.h5')
     print('Trained model saved to \'%s/trained_model.h5\'' % args.save_dir)
 
-    from utils import plot_log
+    from .utils import plot_log
     plot_log(args.save_dir + '/log.csv', show=False)
 
     return model
@@ -142,7 +143,7 @@ def test(model, data):
     print('Test acc:', np.sum(np.argmax(y_pred, 1) == np.argmax(y_test, 1))/y_test.shape[0])
 
     import matplotlib.pyplot as plt
-    from utils import combine_images
+    from .utils import combine_images
     from PIL import Image
 
     img = combine_images(np.concatenate([x_test[:50],x_recon[:50]]))
